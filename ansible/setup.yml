@@ -1,0 +1,17 @@
+- name: Configure Client VM
+  hosts: managed
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - nodejs
+          - npm
+          - git
+          - curl
+        state: present
