@@ -44,6 +44,9 @@ cat > "$BASE_DIR/ansible/inventory.ini" <<EOF
 $VM_IP ansible_user=cloud ansible_password=123456
 EOF
 
+echo "Cleaning old SSH key..."
+ssh-keygen -f "/var/lib/jenkins/.ssh/known_hosts" -R "$VM_IP" || true
+
 echo "Running Ansible..."
 cd "$BASE_DIR/ansible"
 
