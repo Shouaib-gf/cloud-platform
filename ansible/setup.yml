@@ -3,9 +3,14 @@
   become: yes
 
   tasks:
+    - name: Wait for cloud-init/boot stabilization
+      pause:
+        seconds: 1
+
     - name: Update apt cache
       apt:
         update_cache: yes
+        lock_timeout: 15
 
     - name: Install required packages
       apt:
@@ -15,3 +20,4 @@
           - git
           - curl
         state: present
+        lock_timeout: 15
