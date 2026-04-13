@@ -1,0 +1,102 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function Admin() {
+
+  const [requests, setRequests] = useState([]);
+  const API = "http://192.168.159.157:3000";
+
+  /* 🔐 PROTECT ADMIN PAGE */
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+
+    if (role !== "admin") {
+      alert("Access denied ❌");
+      window.location.reload();
+    }
+  }, []);
+
+  /* 📡 FETCH REQUESTS */
+  const fetch = async () => {
+    try {
+      const res = await axios.get(`${API}/api/request/all`);
+      setRequests(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* 🚀 APPROVE VM */
+  const approve = async (id) => {
+    try {
+      await axios.post(`${API}/api/request/approve/${id}`);
+      alert("Deployment started 🚀");
+      fetch();
+    } catch (err) {
+      alert("Error ❌");
+    }
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-4">
+      
+      <h2 className="text-2xl font-bold">🧑‍💼 Admin Panel</h2>
+
+      {requests.map(r => (
+        <div 
+          key={r._id} 
+          className="bg-white p-4 rounded shadow flex justify-between items-center"
+        >
+
+          {/* LEFT SIDE */}
+          <div>
+            <p className="font-bold">{r.vm_name}</p>
+            <p className="text-sm text-gray-500">Plan: {r.plan}</p>
+
+            <p className="text-sm">
+              Status: 
+              <span className={`ml-2 font-bold ${
+                r.status === "accepted" 
+                  ? "text-green-600" 
+                  : "text-yellow-500"
+              }`}>
+                {r.status}
+              </span>
+            </p>
+
+            {/* SHOW IP AFTER DEPLOY */}
+            {r.vm_ip && (
+              <p className="text-sm text-blue-600">
+                IP: {r.vm_ip}
+              </p>
+            )}
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div>
+            {r.status === "waiting" && (
+              <button
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                onClick={() => approve(r._id)}
+              >
+                Approve
+              </button>
+            )}
+
+            {r.status === "accepted" && (
+              <span className="text-green-600 font-bold">
+                ✔ Deployed
+              </span>
+            )}
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  );
+}
