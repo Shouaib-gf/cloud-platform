@@ -16,11 +16,11 @@ provider "proxmox" {
 
 resource "proxmox_virtual_environment_vm" "vm1" {
   name      = var.vm_name
-  vm_id = var.vm_id
+  vm_id     = var.vm_id
   node_name = "pve"
 
   clone {
-    vm_id = 9000
+    vm_id = 999
   }
 
   cpu {
@@ -37,11 +37,12 @@ resource "proxmox_virtual_environment_vm" "vm1" {
 
   disk {
     datastore_id = "local-lvm"
-    size = var.disk_size
+    size         = var.disk_size
     interface    = "scsi0"
   }
 
   initialization {
+
     user_account {
       username = "cloud"
       password = "123456"
@@ -52,5 +53,8 @@ resource "proxmox_virtual_environment_vm" "vm1" {
         address = "dhcp"
       }
     }
+
+    # ✅ CORRECT WAY (NO user_data)
+    user_data_file_id = "local:snippets/webssh.yaml"
   }
 }

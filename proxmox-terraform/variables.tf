@@ -1,18 +1,27 @@
 variable "vm_name" {
-  default = "client-vm"
+  description = "Name of the VM"
+  type        = string
+}
+
+variable "vm_id" {
+  description = "Unique VM ID"
+  type        = number
 }
 
 variable "cpu_cores" {
-  default = 2
+  description = "Number of CPU cores"
+  type        = number
+  default     = 2
 }
 
 variable "ram" {
-  default = 2048
+  description = "RAM in MB"
+  type        = number
+  default     = 2048
 }
 
 variable "disk_size" {
-  default = 30
-}
-variable "vm_id" {
-  default = 110
+  description = "Disk size in GB"
+  type        = number
+  default     = 30
 }
